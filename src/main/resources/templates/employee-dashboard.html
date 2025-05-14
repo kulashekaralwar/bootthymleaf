@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Employee Dashboard</title></head>
+<body>
+<h2>Welcome, <span th:text="${employee.name}">Name</span></h2>
+
+<h3>Select Skill to Upskill</h3>
+<form method="post" action="/employee/select-skill">
+    <input type="text" name="skill" placeholder="Enter skill"/>
+    <button type="submit">Submit</button>
+</form>
+
+<p th:if="${employee.selectedSkill}">
+    Selected Skill: <b th:text="${employee.selectedSkill}"></b><br/>
+    Quiz Passed: <b th:text="${employee.quizPassed}"></b>
+</p>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Skill Roadmap</title></head>
+<body>
+<h2>AI-Generated Roadmap</h2>
+<pre th:text="${roadmap}"></pre>
+
+<form method="post" action="/employee/submit-quiz">
+    <h3>Did you pass the quiz?</h3>
+    <input type="radio" name="passed" value="true"/> Yes
+    <input type="radio" name="passed" value="false"/> No
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

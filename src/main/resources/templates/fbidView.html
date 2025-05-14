@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>List</title>
+</head>
+<body>
+	<h2>data is</h2>
+	<h3 th:text="${ThorDto}"></h3>
+	<!-- <h3 th:text="${ThorDto.name}"></h3>
+	<h3 th:text="${ThorDto.email}"></h3>
+	<h3 th:text="${ThorDto.password}"></h3> -->
+	<!--<table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Password</th>
+        </tr>
+        <tr th:each="thor : ${thors}">
+            <td th:text="${thor.id}"></td>
+            <td th:text="${thor.email}"></td>
+            <td th:text="${thor.name}"></td>
+            <td th:text="${thor.password}"></td>
+        </tr>
+    </table>  -->
+</body>
+</html>
