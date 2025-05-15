@@ -1,15 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Manager Dashboard</title></head>
+<head>
+    <title>Manager Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f0f2f5; padding: 30px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ccc; }
+        th { background-color: #eee; }
+        a { text-decoration: none; color: blue; }
+    </style>
+</head>
 <body>
-<h2>All Employees</h2>
-<table>
-    <tr><th>Name</th><th>Selected Skill</th><th>Quiz Passed</th></tr>
-    <tr th:each="emp : ${employees}">
-        <td th:text="${emp.name}"></td>
-        <td th:text="${emp.selectedSkill}"></td>
-        <td th:text="${emp.quizPassed}"></td>
-    </tr>
-</table>
+<div class="container">
+    <h2>Manager Dashboard - Employees</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th><th>Email</th><th>Skills</th><th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="emp : ${employees}">
+            <td th:text="${emp.name}"></td>
+            <td th:text="${emp.email}"></td>
+            <td th:text="${#strings.arrayJoin(emp.skills.toArray(), ', ')}"></td>
+            <td><a th:href="@{/manager/view/{id}(id=${emp.id})}">View</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

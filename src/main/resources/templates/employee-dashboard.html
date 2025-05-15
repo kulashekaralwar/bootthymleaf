@@ -1,18 +1,60 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Employee Dashboard</title></head>
+<head>
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef1f5;
+            padding: 40px;
+        }
+        .dashboard {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #222;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #1e7e34;
+        }
+        .message {
+            margin-top: 15px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
 <body>
-<h2>Welcome, <span th:text="${employee.name}">Name</span></h2>
+<div class="dashboard">
+    <h2>Welcome, <span th:text="${employee.name}">Employee</span>!</h2>
 
-<h3>Select Skill to Upskill</h3>
-<form method="post" action="/employee/select-skill">
-    <input type="text" name="skill" placeholder="Enter skill"/>
-    <button type="submit">Submit</button>
-</form>
+    <h3>Your Skills:</h3>
+    <ul>
+        <li th:each="skill : ${employee.skills}" th:text="${skill}"></li>
+    </ul>
 
-<p th:if="${employee.selectedSkill}">
-    Selected Skill: <b th:text="${employee.selectedSkill}"></b><br/>
-    Quiz Passed: <b th:text="${employee.quizPassed}"></b>
-</p>
+    <a th:href="@{/employee/roadmap}">
+        <button class="btn">Start New Upskilling</button>
+    </a>
+
+    <div th:if="${message}" class="message" th:text="${message}"></div>
+</div>
 </body>
 </html>

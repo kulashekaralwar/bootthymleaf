@@ -24,7 +24,7 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping({"/", "/login"})
+    @GetMapping("/")
     public String loginPage() {
         return "login";
     }
@@ -34,7 +34,6 @@ public class AuthController {
                         @RequestParam String password,
                         HttpSession session,
                         Model model) {
-
         Employee employee = employeeRepo.findByEmail(email);
         Manager manager = managerRepo.findByUsername(email);
 
@@ -60,27 +59,24 @@ public class AuthController {
                          @RequestParam String password,
                          @RequestParam String role,
                          Model model) {
-
-        if (role.equals("EMPLOYEE")) {
+        if (role.equalsIgnoreCase("EMPLOYEE")) {
             Employee emp = new Employee();
             emp.setUsername(username);
+            emp.setEmail(username); // Assuming email is used as username
             emp.setPassword(passwordEncoder.encode(password));
             emp.setRole("EMPLOYEE");
-            emp.setEmail(username); // Ensure email field is set if used for login
             employeeRepo.save(emp);
-
-        } else if (role.equals("MANAGER")) {
+        } else if (role.equalsIgnoreCase("MANAGER")) {
             Manager mgr = new Manager();
             mgr.setUsername(username);
             mgr.setPassword(passwordEncoder.encode(password));
             mgr.setRole("MANAGER");
             managerRepo.save(mgr);
-
         } else {
             model.addAttribute("error", "Invalid role selected");
             return "signup";
         }
 
-        return "redirect:/login";
+        return "redirect:/";
     }
 }

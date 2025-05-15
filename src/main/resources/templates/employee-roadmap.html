@@ -1,15 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Skill Roadmap</title></head>
+<head>
+    <title>Employee Roadmap</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            padding: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            color: #333;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        ul {
+            margin: 10px 0;
+        }
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
 <body>
-<h2>AI-Generated Roadmap</h2>
-<pre th:text="${roadmap}"></pre>
+<div class="container">
+    <h2>Upskill with Roadmap</h2>
 
-<form method="post" action="/employee/submit-quiz">
-    <h3>Did you pass the quiz?</h3>
-    <input type="radio" name="passed" value="true"/> Yes
-    <input type="radio" name="passed" value="false"/> No
-    <button type="submit">Submit</button>
-</form>
+    <form th:action="@{/employee/generate-roadmap}" method="post">
+        <label for="selectedSkill">Select a skill to learn:</label>
+        <select name="selectedSkill" id="selectedSkill">
+            <option th:each="skill : ${skills}" th:value="${skill}" th:text="${skill}"></option>
+        </select>
+        <button type="submit" class="btn">Generate Roadmap</button>
+    </form>
+
+    <div th:if="${roadmap != null}">
+        <hr>
+        <h3>Roadmap for <span th:text="${selectedSkill}"></span></h3>
+
+        <h4>Full Learning Path:</h4>
+        <ul>
+            <li th:each="step : ${roadmap.requiredSteps}" th:text="${step}"></li>
+        </ul>
+
+        <h4>Missing Steps (for you):</h4>
+        <ul>
+            <li th:each="step : ${roadmap.missingSteps}" th:text="${step}"></li>
+        </ul>
+
+        <h4>Recommended Resources:</h4>
+        <ul>
+            <li th:each="res : ${roadmap.resources}" th:text="${res}"></li>
+        </ul>
+
+        <form th:action="@{/employee/submit-quiz}" method="post">
+            <input type="hidden" name="skill" th:value="${selectedSkill}" />
+            <label for="score">Enter Mock Score (0-100):</label>
+            <input type="number" name="score" id="score" min="0" max="100" required />
+            <button type="submit" class="btn">Submit Quiz</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>

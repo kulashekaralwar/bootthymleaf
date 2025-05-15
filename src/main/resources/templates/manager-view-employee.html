@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Employee</title>
+    <style>
+        body { font-family: Arial; background: #f9f9f9; padding: 30px; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+        label, select, button { display: block; margin-top: 10px; }
+        .btn { background: #007bff; color: white; padding: 8px 16px; border: none; border-radius: 6px; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 th:text="'Employee: ' + ${employee.name}"></h2>
+    <p><strong>Email:</strong> <span th:text="${employee.email}"></span></p>
+    <p><strong>Skills:</strong> <span th:text="${#strings.arrayJoin(employee.skills.toArray(), ', ')}"></span></p>
+
+    <h3>Assign Skill Roadmap</h3>
+    <form th:action="@{/manager/assign-roadmap}" method="post">
+        <input type="hidden" name="empId" th:value="${employee.id}" />
+        <label for="skill">Select Skill:</label>
+        <select name="skill" id="skill">
+            <option th:each="skill : ${skills}" th:value="${skill}" th:text="${skill}"></option>
+        </select>
+        <button type="submit" class="btn">Assign Roadmap</button>
+    </form>
+
+    <div th:if="${roadmap != null}">
+        <hr>
+        <h4 th:text="'Roadmap for ' + ${selectedSkill}"></h4>
+        <ul>
+            <li th:each="step : ${roadmap.missingSteps}" th:text="${step}"></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

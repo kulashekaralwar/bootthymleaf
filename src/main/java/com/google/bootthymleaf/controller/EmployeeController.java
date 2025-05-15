@@ -1,14 +1,16 @@
 package com.google.bootthymleaf.controller;
 
-import jakarta.servlet.http.HttpSession;
+import com.google.bootthymleaf.dto.Employee;
+import com.google.bootthymleaf.repository.EmployeeRepository;
+import com.google.bootthymleaf.service.AIService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.google.bootthymleaf.dto.Employee;
-import com.google.bootthymleaf.repository.EmployeeRepository;
-import com.google.bootthymleaf.service.AIService;
+import java.security.Principal;
+import java.util.*;
 
 @Controller
 @RequestMapping("/employee")
@@ -20,42 +22,48 @@ public class EmployeeController {
     @Autowired
     private AIService aiService;
 
+    // Dashboard
     @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
-        Employee employee = (Employee) session.getAttribute("employee");
-        if (employee == null) return "redirect:/login";
-
-        model.addAttribute("employee", employee);
+    public String employeeDashboard(Model model, Principal principal) {
+        Employee emp = employeeRepo.findByEmail(principal.getName());
+        model.addAttribute("employee", emp);
         return "employee-dashboard";
     }
 
-    @PostMapping("/select-skill")
-    public String selectSkill(@RequestParam String skill, HttpSession session, Model model) {
-        Employee employee = (Employee) session.getAttribute("employee");
-        if (employee == null) return "redirect:/login";
-
-        employee.setSelectedSkill(skill);
-        employeeRepo.save(employee);
-
-        String roadmap = aiService.generateRoadmap(skill, employee.getSkills());
-        model.addAttribute("roadmap", roadmap);
-        model.addAttribute("employee", employee);
+    // Skill selection page
+    @GetMapping("/roadmap")
+    public String showSkillSelection(Model model) {
+        List<String> skills = aiService.getAvailableSkills(); // e.g., ["Java", "AWS", "Spring"]
+        model.addAttribute("skills", skills);
         return "employee-roadmap";
     }
 
-    @PostMapping("/submit-quiz")
-    public String submitQuiz(@RequestParam boolean passed, HttpSession session) {
-        Employee employee = (Employee) session.getAttribute("employee");
-        if (employee == null) return "redirect:/login";
+    // Handle skill selection and generate roadmap
+    @PostMapping("/generate-roadmap")
+    public String generateRoadmap(@RequestParam("selectedSkill") String skill, Principal principal, Model model) {
+        Employee emp = employeeRepo.findByEmail(principal.getName());
 
-        if (passed) {
-            employee.getSkills().add(employee.getSelectedSkill());
-            employee.setQuizPassed(true);
+        Map<String, Object> roadmap = aiService.generateRoadmap(emp, skill);
+        model.addAttribute("roadmap", roadmap);
+        model.addAttribute("selectedSkill", skill);
+        return "employee-roadmap";
+    }
+
+    // Quiz evaluation (mock logic)
+    @PostMapping("/submit-quiz")
+    public String submitQuiz(@RequestParam("skill") String skill, @RequestParam("score") int score, Principal principal, Model model) {
+        Employee emp = employeeRepo.findByEmail(principal.getName());
+
+        if (score >= 70) {
+            // Add skill to employee profile
+            emp.getSkills().add(skill);
+            employeeRepo.save(emp);
+            model.addAttribute("message", "Quiz passed! Skill added.");
         } else {
-            employee.setQuizPassed(false);
+            model.addAttribute("message", "Quiz failed. Please try again.");
         }
 
-        employeeRepo.save(employee);
-        return "redirect:/employee/dashboard";
+        model.addAttribute("employee", emp);
+        return "employee-dashboard";
     }
 }
